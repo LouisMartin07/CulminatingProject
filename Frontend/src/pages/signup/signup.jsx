@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-const LogInPage = () => {
+const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Login logic here...
-    console.log("Login with:", email, password);
-    // On success:
-    navigate('/dashboard'); // Adjust as necessary
+    // Sign up logic here...
+    console.log("Register with:", email, password);
+    // Handle registration response
   };
 
   return (
-    <div className="login-container">
+    <div className="signup-container">
       <Form onSubmit={handleSubmit}>
-        <h1>Log In</h1>
-        <Form.Group className="mb-3" controlId="loginEmail">
+        <h1>Sign Up</h1>
+        <Form.Group className="mb-3" controlId="signupEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
             type="email"
@@ -29,7 +27,7 @@ const LogInPage = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="loginPassword">
+        <Form.Group className="mb-3" controlId="signupPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
@@ -38,13 +36,14 @@ const LogInPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">Log In</Button>
+        {/* do I want any additional information? */}
+        <Button variant="primary" type="submit">Sign Up</Button>
         <div className="mt-3">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
+          Already have an account? <Link to="/login">Log In</Link>
         </div>
       </Form>
     </div>
   );
 };
 
-export default LogInPage;
+export default SignUpPage;
