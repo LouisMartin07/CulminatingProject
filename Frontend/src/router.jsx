@@ -3,7 +3,7 @@ import App from "./App";
 import HomePage from "./pages/homepage/homepage";
 import Login from "./pages/login/login";
 import SignUp from "./pages/signup/signup";
-// import Dashboard from "./pages/dashboard/Dashboard";
+import Dashboard from "./pages/dashboard/dashboard";
 // import Settings from "./pages/settings/Settings";
 // import Calendar from "./pages/calendar/Calendar";
 // import HiveData from "./pages/hivedata/HiveData";
@@ -26,10 +26,10 @@ const router = createBrowserRouter([
         path: "signup",
         element: <SignUp />,
       },
-      // {
-      //   path: "dashboard",
-      //   element: <Dashboard />,
-      // },
+      {
+        path: "dashboard",
+        element: <Dashboard />,
+      },
       // {
       //   path: "settings",
       //   element: <Settings />,
