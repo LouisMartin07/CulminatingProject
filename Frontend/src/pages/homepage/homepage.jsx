@@ -1,6 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card, Navbar, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 
 import image1 from '../../assets/images/bee.webp';
 import image2 from '../../assets/images/voice2txt.webp';
@@ -18,16 +17,6 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar bg="light" expand="lg" fixed="top">
-        <Container>
-          <Navbar.Brand href="#home">AllTheBuzz or NewBee </Navbar.Brand> {/* pick between website titles */}
-          <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link as={Link} to="/login">Login/Signup</Nav.Link> {/* Use Link to navigate (currently does nothing */}
-          </Nav>
-        </Container>
-      </Navbar>
-
     <Container fluid>
       {[image1, image2, image3, image3].map((image, index) => (
         <Row key={index} className="mb-5">

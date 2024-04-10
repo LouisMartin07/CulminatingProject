@@ -23,7 +23,7 @@ class SignUp(APIView):
         try:
             user.full_clean()
             user.save
-            token = Token.objects.crate(user=user)
+            token = Token.objects.create(user=user)
             return Response({'user': user.display_name, 'token': token.key}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             return Response({'errors': "Invalid credentiuals"}, status=status.HTTP_400_BAD_REQUEST)

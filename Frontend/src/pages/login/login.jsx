@@ -8,18 +8,15 @@ const LogInPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Login logic here...
-    console.log("Login with:", email, password);
-    // On success:
-    navigate('/dashboard'); // Adjust as necessary
-  };
-
   return (
     <div className="login-container">
-      <Form onSubmit={handleSubmit}>
         <h1>Log In</h1>
+      <Form
+        onSubmit={async (e) => [
+          e.preventDefault(),
+          setUser(await userLogIn(email, password)),
+        ]}
+      >
         <Form.Group className="mb-3" controlId="loginEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control

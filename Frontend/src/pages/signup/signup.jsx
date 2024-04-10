@@ -7,17 +7,15 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Sign up logic here...
-    console.log("Register with:", email, password);
-    // Handle registration response
-  };
-
   return (
     <div className="signup-container">
-      <Form onSubmit={handleSubmit}>
         <h1>Sign Up</h1>
+      <Form
+        onSubmit={async (e) => [
+          e.preventDefault(),
+          setUser(await userRegistration(email, password)),
+        ]}
+      >
         <Form.Group className="mb-3" controlId="signupEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
