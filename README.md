@@ -27,3 +27,13 @@ Frontend
 ├─ vite.config.js
 
 
+Notes for Dev's
+    1. Used bootstrap for all page styling, and if desired use App & index.css for entire webapp styling 
+    2. The Navbar will is based off the userState if someone is logged in or not and changes dispaly based on that  
+    3. 
+
+Stretch Goals
+    1. Set up some VisionAI so beekeeper can take slide picture and upload to website, and website will indetail break down slide
+    2. Use google anayltics to take weather metrics and inputted slide data to show possible correlations 
+    3. Deploy website
+    4.   
