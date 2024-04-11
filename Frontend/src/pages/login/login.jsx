@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext,useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { userLogIn } from '../../utils/account'; 
 import Button from 'react-bootstrap/Button';
@@ -9,12 +9,15 @@ const LogInPage = () => {
   const { setUser } = useOutletContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission
     const user = await userLogIn(email, password); // Attempt to log in
     if (user) {
       setUser(user); // If login is successful, update the user context
+      navigate('/dashboard')
     } else {
       console.error("Login failed");
     }

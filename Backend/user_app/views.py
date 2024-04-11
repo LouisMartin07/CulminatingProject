@@ -13,7 +13,23 @@ from .models import AppUser
 
 class SignUp(APIView):
     def post(self, request):
+        # gets all request data
         data = request.data
+        
+        # created variables per parimeter to check against existing or not
+        username_exists = AppUser.objects.filter(username=data.get('username')).exists() #.exists is optimizes for SQL querying and returns a boolean
+        email_exists = AppUser.objects.filter(email=data.get('email')).exists()
+
+        # error handling if username and email are not unique 
+        if username_exists or email_exists:
+            errors = {} # using a list to store the errors incase I add more parameters 
+            if username_exists:
+                errors['username'] = ['A user with that username already exists']
+            if email_exists:
+                errors['email'] = ['A user with that email already exists']
+            return Response({'errors': errors}, status=status.HTTP_400_BAD_REQUEST)
+
+        # if username and email are unique 
         user = AppUser(
             username = data.get('username', data.get('email')),
             email=data.get('email'),
@@ -30,7 +46,7 @@ class SignUp(APIView):
         
 class LogIn(APIView):
     def post(self, request):
-        user = authenticate(username=request.data.get('username'), password=request.data.get('password'))
+        user = authenticate(email=request.data.get('email'), password=request.data.get('password'))
         if user:
             login(request, user)
             token, _ = Token.objects.get_or_create(user=user)
