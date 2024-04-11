@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { userRegistration } from '../../utils/account'; 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Link } from 'react-router-dom';
 
 const SignUpPage = () => {
+  const { setUser } = useOutletContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the form from causing a page reload
+    const user = await userRegistration(email, password);
+    if (user) {
+      setUser(user); // If user registration is successful, update the user context
+    } else {
+      console.error("Registration failed");
+    }
+  };
+
   return (
     <div className="signup-container">
-        <h1>Sign Up</h1>
-      <Form
-        onSubmit={async (e) => [
-          e.preventDefault(),
-          setUser(await userRegistration(email, password)),
-        ]}
-      >
+      <h1>Sign Up</h1>
+      <Form onSubmit={handleSubmit}> 
         <Form.Group className="mb-3" controlId="signupEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -34,7 +42,6 @@ const SignUpPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        {/* do I want any additional information? */}
         <Button variant="primary" type="submit">Sign Up</Button>
         <div className="mt-3">
           Already have an account? <Link to="/login">Log In</Link>

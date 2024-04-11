@@ -1,12 +1,12 @@
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Outlet } from 'react-router-dom';
-import { useState } from "react";
 import CustomNavbar from './components/Navbar/customnavbar';
+import { Outlet, useLoaderData } from 'react-router-dom';
+import { useState } from "react";
 
 function App() {
   // Initialize user state as null until valid user is logged in
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(useLoaderData);
 
   return (
     <>

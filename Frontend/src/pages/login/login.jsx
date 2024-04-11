@@ -1,22 +1,29 @@
 import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { userLogIn } from '../../utils/account'; 
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useNavigate, Link } from 'react-router-dom';
 
 const LogInPage = () => {
+  const { setUser } = useOutletContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent the default form submission
+    const user = await userLogIn(email, password); // Attempt to log in
+    if (user) {
+      setUser(user); // If login is successful, update the user context
+    } else {
+      console.error("Login failed");
+    }
+  };
 
   return (
     <div className="login-container">
-        <h1>Log In</h1>
-      <Form
-        onSubmit={async (e) => [
-          e.preventDefault(),
-          setUser(await userLogIn(email, password)),
-        ]}
-      >
+      <h1>Log In</h1>
+      <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="loginEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control

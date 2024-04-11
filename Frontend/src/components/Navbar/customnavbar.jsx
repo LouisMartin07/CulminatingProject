@@ -1,18 +1,40 @@
 import React from 'react';
-import { Navbar, Nav, Container } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-
+import { Navbar, Nav, Container, Button } from 'react-bootstrap'; 
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { userLogOut } from '../../utils/account';
 
 const CustomNavbar = ({ setUser, user }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // This function handles the logout process
+  const handleLogOut = async () => {
+    await userLogOut(); // Call the logout function
+    setUser(null); // Update the state to reflect that the user is no longer signed in
+    navigate('/'); // Home page redirect
+  };
+
+  // Custom handler for the Home link
+  const handleHomeClick = (e) => {
+    e.preventDefault(); // Prevent default anchor behavior
+
+    if (location.pathname === '/') {
+      // User is already on the home page, scroll to top
+      window.scrollTo(0, 0);
+    } else {
+      // User is not on the home page, navigate to home
+      navigate('/');
+    }
+  };
+
   return (
-    <Navbar bg="light" expand="lg" fixed={!user ? null : 'top'}>
+    <Navbar bg="light" expand="lg" fixed="top">
       <Container>
-        {user ? (
-          // If user is authenticated
+        {user ? ( // conditionally display a different NavBar based on user signed on state
           <>
-            <Navbar.Brand as={Link} to="/">AllTheBuzz or NewBee</Navbar.Brand>
-            <Nav className="me-auto"> {/* Corrected to "me-auto" for Bootstrap 5 */}
-              <Nav.Link as={Link} to="/signout">Sign Out</Nav.Link>
+            <Navbar.Brand as={Link} to="/">AllTheBuzz or NewBee</Navbar.Brand> {/* see if whole class will vote on name when presenting project*/}
+            <Nav className="me-auto">
+              <Button variant="outline-primary" onClick={handleLogOut}>Sign Out</Button>
               <Nav.Link as={Link} to="/calendar">Go to Calendar</Nav.Link>
               <Nav.Link as={Link} to="/hivedata">Go to Hive Data</Nav.Link>
               <Nav.Link as={Link} to="/analytics">Go to Analytics</Nav.Link>
@@ -20,11 +42,10 @@ const CustomNavbar = ({ setUser, user }) => {
             </Nav>
           </>
         ) : (
-          // If user is not authenticated
           <>
-            <Navbar.Brand href="#home">AllTheBuzz or NewBee</Navbar.Brand> {/* Still need to decide on title */}
+            <Navbar.Brand href="#home">AllTheBuzz or NewBee</Navbar.Brand> {/* see if whole class will vote on name when presenting project*/}
             <Nav className="me-auto">
-              <Nav.Link href="#home">Home</Nav.Link>
+              <Nav.Link href="#home" onClick={handleHomeClick}>Home</Nav.Link>
               <Nav.Link as={Link} to="/login">Login/Signup</Nav.Link>
             </Nav>
           </>

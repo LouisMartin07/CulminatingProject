@@ -22,7 +22,7 @@ class SignUp(APIView):
         user.password = make_password(data.get('password')) #hashes the password before saving it and neccessary becuase save password is only for existing models
         try:
             user.full_clean()
-            user.save
+            user.save()
             token = Token.objects.create(user=user)
             return Response({'user': user.display_name, 'token': token.key}, status=status.HTTP_201_CREATED)
         except ValidationError as e:
