@@ -1,0 +1,86 @@
+import React, { useState, useEffect } from 'react';
+import { createHive, getHives, deleteHive } from '../../utils/hives';
+import { Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
+
+const Hives = () => {
+  const [name, setName] = useState('');
+  const [location, setLocation] = useState('');
+  const [hives, setHives] = useState([]);
+  const navigate = useNavigate(); // Use useNavigate here
+
+  useEffect(() => {
+    loadHives();
+  }, []);
+
+  const loadHives = async () => {
+    const hivesData = await getHives();
+    setHives(hivesData || []);
+  };
+
+  const handleCreateHive = async (e) => {
+    e.preventDefault();
+    const newHive = await createHive(name, location);
+    if (newHive) {
+      setName('');
+      setLocation('');
+      loadHives();
+    }
+  };
+
+  const handleDelete = async (hiveId) => {
+    const success = await deleteHive(hiveId);
+    if (success) {
+      loadHives();
+    }
+  };
+
+  const handleManageSlides = (hiveId) => {
+    navigate(`/hives/${hiveId}/slides`); // Use navigate instead of history.push
+  };
+
+  return (
+    <div className="container mt-5">
+      <h1>Hive Management</h1>
+      <Form onSubmit={handleCreateHive}>
+        <Form.Group className="mb-3">
+          <Form.Label>Hive Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter hive name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group className="mb-3">
+          <Form.Label>Location</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          />
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Create Hive
+        </Button>
+      </Form>
+      <div>
+        <h2>Existing Hives</h2>
+        {hives.map((hive) => (
+          <div key={hive.id} className="mb-3">
+            <span>{hive.name} - {hive.location}</span>
+            <Button variant="secondary" onClick={() => handleManageSlides(hive.id)} className="ms-2">
+              Manage Slides
+            </Button>
+            <Button variant="danger" onClick={() => handleDelete(hive.id)} className="ms-2">
+              Delete Hive
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Hives;

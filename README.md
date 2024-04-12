@@ -37,3 +37,7 @@ Stretch Goals
     2. Use google anayltics to take weather metrics and inputted slide data to show possible correlations 
     3. Deploy website
     4.   
+
+To get Answered
+    1. cons to using DRFS auto URL config?
+    2. 

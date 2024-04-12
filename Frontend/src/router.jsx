@@ -5,9 +5,11 @@ import SignUp from "./pages/signup/signup";
 import Dashboard from "./pages/dashboard/dashboard";
 import { createBrowserRouter } from "react-router-dom";
 import { userConfirmation } from "./utils/account";
-// import Settings from "./pages/settings/Settings";
+import Settings from "./pages/settings/settings";
+import Hives from "./pages/hivedata/hives";
+import Slides from "./pages/hivedata/slides";
+// import Bees from "./pages/hivedata/bees";
 // import Calendar from "./pages/calendar/Calendar";
-// import HiveData from "./pages/hivedata/HiveData";
 // import Analytics from "./pages/analytics/Analytics";
 
 const router = createBrowserRouter([
@@ -32,17 +34,25 @@ const router = createBrowserRouter([
         path: "dashboard",
         element: <Dashboard />,
       },
+      {
+        path: "settings",
+        element: <Settings />,
+      },
+      {
+        path: "hives",
+        element: <Hives />,
+      },
+      {
+        path: "hives/:hiveId/slides",
+        element: <Slides />,
+      },
       // {
-      //   path: "settings",
-      //   element: <Settings />,
+      //   path: "bees",
+      //   element: <Bees />,
       // },
       // {
       //   path: "calendar",
       //   element: <Calendar />,
-      // },
-      // {
-      //   path: "hivedata",
-      //   element: <HiveData />,
       // },
       // {
       //   path: "analytics",

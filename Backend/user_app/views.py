@@ -33,7 +33,7 @@ class SignUp(APIView):
         user = AppUser(
             username = data.get('username', data.get('email')),
             email=data.get('email'),
-            display_name=data.get('display_name', 'unkown')
+            display_name=data.get('display_name', 'unknown')
         )
         user.password = make_password(data.get('password')) #hashes the password before saving it and neccessary becuase save password is only for existing models
         try:
@@ -67,23 +67,38 @@ class UserInfo(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        return Response({'user': user.display_name})
-    
     def put(self, request):
         user = request.user
         data = request.data
+        
+        # Update display name if provided
         user.display_name = data.get('display_name', user.display_name)
+        
+        # Update email if provided
+        if 'email' in data:
+            # Ensure the new email is unique and not already taken
+            if AppUser.objects.filter(email=data['email']).exclude(id=user.id).exists():
+                return Response({'error': 'This email is already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.email = data['email']
+        
+        # Update username if provided
+        if 'username' in data:
+            # Ensure the new username is unique
+            if AppUser.objects.filter(username=data['username']).exclude(id=user.id).exists():
+                return Response({'error': 'This username is already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.username = data['username']
+        
+        # Change password if old and new are provided
         if 'password' in data and 'new_password' in data:
             if user.check_password(data['password']):
                 user.set_password(data['new_password'])
-            else: 
+            else:
                 return Response({'error': 'Incorrect password'}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        # Save the changes
         try:
             user.full_clean()
             user.save()
-            return Response({"display_name": user.display_name}, status=status.HTTP_200_OK)
+            return Response({"message": "User info updated successfully."}, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)

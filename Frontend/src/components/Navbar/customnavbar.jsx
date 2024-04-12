@@ -36,7 +36,7 @@ const CustomNavbar = ({ setUser, user }) => {
             <Nav className="me-auto">
               <Button variant="outline-primary" onClick={handleLogOut}>Sign Out</Button>
               <Nav.Link as={Link} to="/calendar">Go to Calendar</Nav.Link>
-              <Nav.Link as={Link} to="/hivedata">Go to Hive Data</Nav.Link>
+              <Nav.Link as={Link} to="/hives">Go to Hive Data</Nav.Link>
               <Nav.Link as={Link} to="/analytics">Go to Analytics</Nav.Link>
               <Nav.Link as={Link} to="/settings">Go to Settings</Nav.Link>
             </Nav>
