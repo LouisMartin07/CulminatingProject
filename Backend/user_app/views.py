@@ -32,7 +32,8 @@ class SignUp(APIView):
         user = AppUser(
             username = data.get('username', data.get('email')),
             email=data.get('email'),
-            display_name=data.get('display_name', 'unknown')
+            display_name=data.get('display_name', 'unknown'),
+            zip_code=data.get('zip_code')
         )
         user.password = make_password(data.get('password')) #hashes the password before saving it and neccessary becuase save password is only for existing models
         try:

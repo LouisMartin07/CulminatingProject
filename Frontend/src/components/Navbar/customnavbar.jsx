@@ -35,10 +35,10 @@ const CustomNavbar = ({ setUser, user }) => {
             <Navbar.Brand as={Link} to="/">AllTheBuzz or NewBee</Navbar.Brand> {/* see if whole class will vote on name when presenting project*/}
             <Nav className="me-auto">
               <Button variant="outline-primary" onClick={handleLogOut}>Sign Out</Button>
-              <Nav.Link as={Link} to="/calendar">Go to Calendar</Nav.Link>
-              <Nav.Link as={Link} to="/hives">Go to Hive Data</Nav.Link>
-              <Nav.Link as={Link} to="/analytics">Go to Analytics</Nav.Link>
-              <Nav.Link as={Link} to="/settings">Go to Settings</Nav.Link>
+              <Nav.Link as={Link} to="/calendar">Calendar</Nav.Link>
+              <Nav.Link as={Link} to="/hives">Hive Data</Nav.Link>
+              <Nav.Link as={Link} to="/analytics">Analytics</Nav.Link>
+              <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
             </Nav>
           </>
         ) : (

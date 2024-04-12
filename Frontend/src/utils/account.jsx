@@ -16,9 +16,9 @@ export const userConfirmation = async () => {
 };
 
 
-export const userRegistration = async (email, password, display_name) => {
+export const userRegistration = async (email, password, display_name, zip_code) => {
   try {
-    const response = await api.post("users/signup/", { email, password, display_name});
+    const response = await api.post("users/signup/", { email, password, display_name, zip_code});
     if (response.status === 201) {
       const { user, token } = response.data;
       localStorage.setItem("token", token);
