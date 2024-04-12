@@ -8,7 +8,7 @@ import { userConfirmation } from "./utils/account";
 import Settings from "./pages/settings/settings";
 import Hives from "./pages/hivedata/hives";
 import Slides from "./pages/hivedata/slides";
-// import Bees from "./pages/hivedata/bees";
+import Bees from "./pages/hivedata/bees";
 // import Calendar from "./pages/calendar/Calendar";
 // import Analytics from "./pages/analytics/Analytics";
 
@@ -46,10 +46,10 @@ const router = createBrowserRouter([
         path: "hives/:hiveId/slides",
         element: <Slides />,
       },
-      // {
-      //   path: "bees",
-      //   element: <Bees />,
-      // },
+      {
+        path: "hives/:hiveId/slides/:slideId/bees",
+        element: <Bees />,
+      },
       // {
       //   path: "calendar",
       //   element: <Calendar />,

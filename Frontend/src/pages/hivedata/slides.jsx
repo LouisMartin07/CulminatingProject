@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { getSlides, createSlide, deleteSlide } from '../../utils/slides';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getSlides, createSlide, updateSlide, deleteSlide } from '../../utils/slides';
 import { Form, Button, Table, Alert } from 'react-bootstrap';
 
 const Slides = () => {
   const { hiveId } = useParams();
+  const navigate = useNavigate();
   const [slides, setSlides] = useState([]);
   const [slideNumber, setSlideNumber] = useState('');
   const [notes, setNotes] = useState('');
+  const [editingSlide, setEditingSlide] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -25,13 +27,28 @@ const Slides = () => {
 
   const handleAddSlide = async (e) => {
     e.preventDefault();
-    const newSlide = await createSlide(hiveId, slideNumber, notes);
+    const newSlide = await createSlide(hiveId, { slideNumber, notes });
     if (newSlide) {
       setSlideNumber('');
       setNotes('');
-      loadSlides();  // Reload the list of slides after adding a new one
+      loadSlides();
     } else {
       setError('Failed to add slide.');
+    }
+  };
+
+  const handleEditSlide = (slide) => {
+    setEditingSlide({ ...slide });
+  };
+
+  const handleUpdateSlide = async (e) => {
+    e.preventDefault();
+    const updatedSlide = await updateSlide(hiveId, editingSlide.id, { slideNumber: editingSlide.slideNumber, notes: editingSlide.notes });
+    if (updatedSlide) {
+      loadSlides();
+      setEditingSlide(null);
+    } else {
+      setError('Failed to update slide.');
     }
   };
 
@@ -48,31 +65,54 @@ const Slides = () => {
     <div className="container mt-5">
       <h1>Slide Management for Hive {hiveId}</h1>
       {error && <Alert variant="danger">{error}</Alert>}
-      <Form onSubmit={handleAddSlide}>
-        <Form.Group className="mb-3">
-          <Form.Label>Slide Number</Form.Label>
-          <Form.Control
-            type="number"
-            placeholder="Enter slide number"
-            value={slideNumber}
-            onChange={(e) => setSlideNumber(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Notes</Form.Label>
-          <Form.Control
-            as="textarea"
-            rows="3"
-            placeholder="Enter any notes"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          Add Slide
-        </Button>
-      </Form>
+      {editingSlide ? (
+        <Form onSubmit={handleUpdateSlide}>
+          <Form.Group className="mb-3">
+            <Form.Label>Slide Number</Form.Label>
+            <Form.Control
+              type="number"
+              value={editingSlide.slideNumber}
+              onChange={(e) => setEditingSlide({ ...editingSlide, slideNumber: e.target.value })}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Notes</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows="3"
+              value={editingSlide.notes}
+              onChange={(e) => setEditingSlide({ ...editingSlide, notes: e.target.value })}
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit">Update Slide</Button>
+          <Button variant="secondary" onClick={() => setEditingSlide(null)}>Cancel</Button>
+        </Form>
+      ) : (
+        <Form onSubmit={handleAddSlide}>
+          <Form.Group className="mb-3">
+            <Form.Label>Slide Number</Form.Label>
+            <Form.Control
+              type="number"
+              placeholder="Enter slide number"
+              value={slideNumber}
+              onChange={(e) => setSlideNumber(e.target.value)}
+              required
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Label>Notes</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows="3"
+              placeholder="Enter any notes"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit">Add Slide</Button>
+        </Form>
+      )}
       <Table striped bordered hover className="mt-3">
         <thead>
           <tr>
@@ -87,8 +127,14 @@ const Slides = () => {
               <td>{slide.slideNumber}</td>
               <td>{slide.notes}</td>
               <td>
+                <Button variant="secondary" onClick={() => handleEditSlide(slide)}>
+                  Edit
+                </Button>
                 <Button variant="danger" onClick={() => handleDeleteSlide(slide.id)}>
                   Delete
+                </Button>
+                <Button variant="info" onClick={() => navigate(`/hives/${hiveId}/slides/${slide.id}/bees`)}>
+                  Manage Bees
                 </Button>
               </td>
             </tr>
