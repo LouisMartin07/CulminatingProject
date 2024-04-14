@@ -4,7 +4,7 @@ export const userConfirmation = async () => {
   const token = localStorage.getItem("token");
   if (token) {
     try {
-      const response = await api.get("users/", {
+      const response = await api.get("users/profile", {
         headers: { Authorization: `Token ${token}` }
       });
       return response.data.user;
@@ -47,10 +47,17 @@ export const userLogIn = async (email, password) => {
 
 export const userLogOut = async () => {
   try {
-    await api.post("users/logout/");
-    localStorage.removeItem("token");
+    const token = localStorage.getItem("token"); // Retrieve the stored token
+    console.log("Token being sent:", token); // Log the token to verify its format and content
+    const response = await api.post("users/logout/", {}, {
+      headers: {
+        'Authorization': `Token ${token}` // Update according to what your server expects
+      }
+    });
+    console.log("Logout successful:", response.data); // Log response to check if logout was successful
+    localStorage.removeItem("token"); // Remove the token from localStorage after logout
   } catch (error) {
-    console.error("Logout error:", error.response?.data);
-    // Handle errors such as server not responding
+    console.error("Logout error:", error); // Log the complete error object
+    console.error("Detailed error data:", error.response ? error.response.data : "No additional error data available");
   }
 };

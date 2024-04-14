@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import get_weather_by_zip
+from .views import GetWeatherByZip
 
 urlpatterns = [
-    path('weather/<str:zip_code>/', get_weather_by_zip, name='weather-by-zip'),
+    path('weather/<str:zip_code>/', GetWeatherByZip.as_view(), name='weather-by-zip'),
 ]

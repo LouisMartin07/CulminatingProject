@@ -67,6 +67,18 @@ class UserInfo(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        user = request.user
+        try:
+            user_data = {
+                'user': user.display_name,
+                'email': user.email,
+                'zip_code': user.profile.zip_code  
+            }
+            return Response(user_data)
+        except AttributeError as e:
+            return Response({'error': f'Missing attribute: {str(e)}'}, status=404)
+    
     def put(self, request):
         user = request.user
         data = request.data

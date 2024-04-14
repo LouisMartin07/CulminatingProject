@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+// Function to fetch user data
 export const fetchUserData = async () => {
   try {
     const response = await axios.get('http://localhost:8000/users/profile/', {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      headers: { Authorization: `Token ${localStorage.getItem('token')}` }
     });
     return response.data;
   } catch (error) {
@@ -12,10 +13,11 @@ export const fetchUserData = async () => {
   }
 };
 
+// Function to fetch weather data by zip code
 export const fetchWeatherData = async (zipCode) => {
   try {
     const response = await axios.get(`http://localhost:8000/weather/${zipCode}/`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+      headers: { Authorization: `Token ${localStorage.getItem('token')}` }
     });
     return response.data;
   } catch (error) {
