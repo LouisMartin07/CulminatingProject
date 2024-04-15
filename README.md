@@ -39,7 +39,7 @@ Refactor
 
 To get Answered
     1. Folder structure - Louise tips
-    2. 
+    2. UI Styling
 
 Struggles
     1. Poor planning - Multiple unexpected layout issues 
@@ -47,9 +47,12 @@ Struggles
         1B. did 3 pages 1 for each aspect of the hive rather then 1 page
         1C. didn't give good forethought on how I would utilize notes and have to create a page/model for it
         1D. didn't think of where to integrate the weather into my web app
+    2. Weather API utilizing 
+    3. API authentication - I have a mix of token and email authentication right now because I couldnt get token to work for my Bee API
     
 Stretch Goals
     1. Set up some VisionAI so beekeeper can take slide picture and upload to website, and website will indetail break down slide
     2. Use google anayltics to take weather metrics and inputted slide data to show possible correlations 
     3. Deploy website
-    4.   
+    5. Set up a secure authentication method for all users and their API calls/their data
+    4. Adjust weather API call's so it can get specific information like unit of measurement/differnt countries  

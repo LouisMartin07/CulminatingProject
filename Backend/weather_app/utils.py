@@ -1,24 +1,23 @@
 import http.client
 import json
+import logging
 
-# Utility to fetch coordinates based on the zip code
-def fetch_coordinates(zip_code, api_key):
-    conn = http.client.HTTPSConnection("api.openweathermap.org")
-    conn.request("GET", f"/geo/1.0/zip?zip={zip_code},GB&appid={api_key}")
-    response = conn.getresponse()
-    if response.status == 200:
-        data = json.loads(response.read().decode())
-        return data['lat'], data['lon']
-    else:
-        return None, None
+# Set up logging
+logger = logging.getLogger(__name__)
 
-# Utility to fetch weather data using coordinates
-def fetch_weather(lat, lon, api_key):
+# Utility to fetch weather data directly using zip code
+def fetch_weather_by_zip(zip_code, api_key, country_code="us"):
+    logger.debug(f"Fetching weather data for zip code: {zip_code} in country: {country_code}")
     conn = http.client.HTTPSConnection("api.openweathermap.org")
-    conn.request("GET", f"/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric")
+    request_path = f"/data/2.5/weather?zip={zip_code},{country_code}&appid={api_key}"
+    conn.request("GET", request_path)
     response = conn.getresponse()
+    data = response.read().decode()
+
     if response.status == 200:
-        weather_data = json.loads(response.read().decode())
+        weather_data = json.loads(data)
+        logger.debug("Weather data retrieved successfully: %s", weather_data)
         return weather_data
     else:
+        logger.error("Failed to fetch weather data: %s, Response: %s", response.status, data)
         return None

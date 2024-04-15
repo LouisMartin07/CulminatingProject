@@ -1,6 +1,8 @@
 from django.db import models
+from user_app.models import AppUser  
 
 class BeeHive(models.Model):
+    user = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name='beehives')
     name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

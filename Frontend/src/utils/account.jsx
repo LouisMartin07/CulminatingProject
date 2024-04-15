@@ -35,7 +35,8 @@ export const userLogIn = async (email, password) => {
     const response = await api.post("users/login/", { email, password });
     if (response.status === 200) {
       const { user, token } = response.data;
-      localStorage.setItem("token", token);
+      localStorage.setItem("token", token);   // Save the token
+      localStorage.setItem("user_email", email);  // Save the user email for the hive API
       return user;
     }
   } catch (error) {
@@ -44,6 +45,7 @@ export const userLogIn = async (email, password) => {
   }
   return null;
 };
+
 
 export const userLogOut = async () => {
   try {

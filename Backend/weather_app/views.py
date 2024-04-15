@@ -1,26 +1,29 @@
 from django.http import JsonResponse
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .utils import fetch_coordinates, fetch_weather
-from user_app.models import AppUser
+from .utils import fetch_weather_by_zip
+import logging
+
+# Setup logger
+logger = logging.getLogger(__name__)
 
 class GetWeatherByZip(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated] # needs to have Username aka email and password but not sure how to get password
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, zip_code):
+        logger.debug(f"Received weather request for zip code: {zip_code} from user: {request.user.username}")
+
         api_key = '0a66bbe936e0be37ad5e64a8efda9ac3'
-        this_user = request.user  # Directly use request.user assuming it is an instance of AppUser (Ty DJ)
-        zip_code = this_user.zip_code  # Get the zip code directly from the logged in user
+        country_code = 'us'  # Dynamically set as needed
 
-        if not zip_code:
-            return JsonResponse({'error': 'User does not have a zip code set'}, status=400)
-
-        lat, lon = fetch_coordinates(zip_code, api_key) 
-        if lat is None or lon is None:
-            return JsonResponse({'error': 'Invalid zip code or API error'}, status=404)
-
-        weather_data = fetch_weather(lat, lon, api_key) 
-        if weather_data:
-            return JsonResponse(weather_data, safe=False) # safe=False to pass a non dictionary object to the front end API call
-        else:
-            return JsonResponse({'error': 'Failed to fetch weather data'}, status=500)
+        try:
+            weather_data = fetch_weather_by_zip(zip_code, api_key, country_code)
+            if weather_data:
+                logger.info(f"Weather data successfully retrieved for zip code: {zip_code}")
+                return JsonResponse(weather_data, safe=False)
+            else:
+                logger.warning(f"Weather data retrieval failed for zip code: {zip_code}")
+                return JsonResponse({'error': 'Failed to fetch weather data'}, status=500)
+        except Exception as e:
+            logger.error(f"An error occurred while fetching weather data: {str(e)}")
+            return JsonResponse({'error': 'An internal error occurred'}, status=500)

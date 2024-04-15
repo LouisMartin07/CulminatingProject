@@ -2,30 +2,40 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import BeeHive, Slide, Bee
+from .models import BeeHive, Slide, Bee, AppUser
 from .serializer import BeeHiveSerializer, SlideSerializer, BeeSerializer
 
 class BeeHiveListCreate(APIView):
     def get(self, request):
-        beehives = BeeHive.objects.all()
+        user_email = request.query_params.get('email')  # Fetch user email from query parameters
+        user = get_object_or_404(AppUser, email=user_email)
+        beehives = BeeHive.objects.filter(user=user)
         serializer = BeeHiveSerializer(beehives, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = BeeHiveSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user_email = request.query_params.get('email')  # Fetch user email from query parameters
+        user = get_object_or_404(AppUser, email=user_email)
+        beehive = BeeHive.objects.create(
+            user=user,
+            name=request.data['name'],
+            location=request.data['location']
+        )
+        serializer = BeeHiveSerializer(beehive)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class BeeHiveRetrieveUpdateDelete(APIView):
     def get(self, request, pk):
-        beehive = get_object_or_404(BeeHive, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        beehive = get_object_or_404(BeeHive, pk=pk, user=user)  # Ensure beehive belongs to the user
         serializer = BeeHiveSerializer(beehive)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        beehive = get_object_or_404(BeeHive, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        beehive = get_object_or_404(BeeHive, pk=pk, user=user)  # Validate user owns the beehive
         serializer = BeeHiveSerializer(beehive, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -33,7 +43,9 @@ class BeeHiveRetrieveUpdateDelete(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        beehive = get_object_or_404(BeeHive, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        beehive = get_object_or_404(BeeHive, pk=pk, user=user)  # Validate user owns the beehive
         beehive.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

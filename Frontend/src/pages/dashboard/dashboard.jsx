@@ -15,7 +15,10 @@ const Dashboard = () => {
       setLoading(true);
       const userData = await fetchUserData();
       if (userData && userData.zip_code) {
+        console.log(userData.zip_code)
+        console.log(userData)
         const weatherData = await fetchWeatherData(userData.zip_code);
+        console.log(weatherData)
         if (weatherData) {
           setWeather(weatherData);
         }
