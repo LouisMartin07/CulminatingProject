@@ -53,11 +53,13 @@ const Slides = () => {
   };
 
   const handleDeleteSlide = async (slideId) => {
-    const success = await deleteSlide(slideId);
-    if (success) {
-      loadSlides();
-    } else {
-      setError('Failed to delete slide.');
+    if (window.confirm("Are you sure you want to delete this slide?")) {
+      const result = await deleteSlide(hiveId, slideId);
+      if (result.success === false) {
+        setError(`Failed to delete slide: ${result.message}`);
+      } else {
+        loadSlides();
+      }
     }
   };
 

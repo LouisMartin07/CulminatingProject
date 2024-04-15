@@ -30,18 +30,23 @@ export const createSlide = async (hiveId, slide_number, notes = '') => {
 
 
 // Delete a slide from a hive
-export const deleteSlide = async (slideId) => {
+export const deleteSlide = async (hiveId, slideId) => {
   const email = getUserEmail();
   try {
-    await api.delete(`/hive/slides/${slideId}/?email=${encodeURIComponent(email)}`, {
+    const response = await api.delete(`/hive/beehives/${hiveId}/slides/${slideId}/?email=${encodeURIComponent(email)}`, {
       headers: getAuthHeader()
     });
-    return true;  // Return true on successful deletion
+    if (response.status === 204) { // HTTP 204 means "No Content", which usually indicates success in delete operations
+      return true;
+    } else {
+      return { success: false, message: `Unexpected status code: ${response.status}` };
+    }
   } catch (error) {
     console.error('Error deleting slide:', error.response?.data);
-    return false;
+    return { success: false, message: error.response?.data?.error || "An unknown error occurred" };
   }
 };
+
 
 // Fetch slides for a specific hive
 export const getSlides = async (hiveId) => {

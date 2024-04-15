@@ -62,21 +62,25 @@ class SlideListCreate(APIView):
         return Response(serializer.data)
 
     def post(self, request, hive_id):
-        print("Request Data:", request.data)  
-        print("Query Params:", request.query_params) 
+        print("Request Data:", request.data)
+        print("Query Params:", request.query_params)
 
         user_email = request.query_params.get('email')
         user = get_object_or_404(AppUser, email=user_email)
         hive = get_object_or_404(BeeHive, id=hive_id, user=user)
 
-        request.data['hive'] = hive.id  
-        serializer = SlideSerializer(data=request.data)
+        # Create a mutable copy of the request data
+        data = request.data.copy()
+        data['hive'] = hive.id  # Manually set the hive ID
+
+        serializer = SlideSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            print("Serializer Errors:", serializer.errors) 
+            print("Serializer Errors:", serializer.errors)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SlideRetrieveUpdateDelete(APIView):
     def get(self, request, hive_id, pk):
@@ -92,11 +96,18 @@ class SlideRetrieveUpdateDelete(APIView):
         user = get_object_or_404(AppUser, email=user_email)
         hive = get_object_or_404(BeeHive, id=hive_id, user=user)
         slide = get_object_or_404(Slide, pk=pk, hive=hive)
+        
+        # Ensure the hive id is included in the data for serialization
+        request.data['hive'] = hive.id
+
         serializer = SlideSerializer(slide, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Serializer Errors:", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     def delete(self, request, hive_id, pk):
         user_email = request.query_params.get('email')
