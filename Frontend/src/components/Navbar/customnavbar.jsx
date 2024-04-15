@@ -1,55 +1,58 @@
 import React from 'react';
-import { Navbar, Nav, Container, Button } from 'react-bootstrap'; 
+import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { FaHome, FaSignInAlt, FaCalendarAlt, FaChartLine, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { userLogOut } from '../../utils/account';
 
 const CustomNavbar = ({ setUser, user }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // This function handles the logout process
   const handleLogOut = async () => {
-    await userLogOut(); // Call the logout function
-    setUser(null); // Update the state to reflect that the user is no longer signed in
-    navigate('/'); // Home page redirect
+    await userLogOut();
+    setUser(null);
+    navigate('/');
   };
 
-  // Custom handler for the Home link
   const handleHomeClick = (e) => {
-    e.preventDefault(); // Prevent default anchor behavior
-
-    if (location.pathname === '/') {
-      // User is already on the home page, scroll to top
-      window.scrollTo(0, 0);
+    e.preventDefault();
+    if (user) {
+      navigate('/dashboard'); // Navigate to dashboard if user is signed in
+    } else if (location.pathname === '/') {
+      window.scrollTo(0, 0); // Scroll to top if already on home page
     } else {
-      // User is not on the home page, navigate to home
-      navigate('/');
+      navigate('/'); // Navigate to home if not signed in and not on home page
     }
   };
 
   return (
-    <Navbar bg="light" expand="lg" fixed="top">
+    <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ boxShadow: '0 4px 6px rgba(0,0,0,.1)' }}>
       <Container>
-        {user ? ( // conditionally display a different NavBar based on user signed on state
-          <>
-            <Navbar.Brand as={Link} to="/">AllTheBuzz or NewBee</Navbar.Brand> {/* see if whole class will vote on name when presenting project*/}
-            <Nav className="me-auto">
-              <Button variant="outline-primary" onClick={handleLogOut}>Sign Out</Button>
-              <Nav.Link as={Link} to="/calendar">Calendar</Nav.Link>
-              <Nav.Link as={Link} to="/hives">Hive Data</Nav.Link>
-              <Nav.Link as={Link} to="/analytics">Analytics</Nav.Link>
-              <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
-            </Nav>
-          </>
-        ) : (
-          <>
-            <Navbar.Brand href="#home">AllTheBuzz or NewBee</Navbar.Brand> {/* see if whole class will vote on name when presenting project*/}
-            <Nav className="me-auto">
-              <Nav.Link href="#home" onClick={handleHomeClick}>Home</Nav.Link>
-              <Nav.Link as={Link} to="/login">Login/Signup</Nav.Link>
-            </Nav>
-          </>
-        )}
+        <Navbar.Brand as={Link} to="/" style={{ fontWeight: 'bold', color: 'orange' }}>
+          AllTheBuzz
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
+          <Nav className="justify-content-center flex-grow-1 pe-3">
+            {user ? (
+              <>
+                <Nav.Link as={Link} to="/calendar"><FaCalendarAlt /> Calendar</Nav.Link>
+                <Nav.Link as={Link} to="/hives"><FaChartLine /> Hive Data</Nav.Link>
+                <Nav.Link href="#home" onClick={handleHomeClick}><FaHome /> Home</Nav.Link>
+                <Nav.Link as={Link} to="/analytics"><FaChartLine /> Analytics</Nav.Link>
+                <NavDropdown title={<span><FaCog /> Settings</span>} id="basic-nav-dropdown">
+                  <NavDropdown.Item as={Link} to="/settings">Profile</NavDropdown.Item>
+                  <NavDropdown.Item onClick={handleLogOut}><FaSignOutAlt /> Sign Out</NavDropdown.Item>
+                </NavDropdown>
+              </>
+            ) : (
+              <>
+                <Nav.Link href="#home" onClick={handleHomeClick}><FaHome /> Home</Nav.Link>
+                <Nav.Link as={Link} to="/login"><FaSignInAlt /> Login/Signup</Nav.Link>
+              </>
+            )}
+          </Nav>
+        </Navbar.Collapse>
       </Container>
     </Navbar>
   );

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { fetchUserData , fetchWeatherData } from '../../utils/weather'; 
+import { fetchUserData , fetchWeatherData, kelvinToFahrenheit } from '../../utils/weather'; 
 
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
@@ -15,19 +15,28 @@ const Dashboard = () => {
       setLoading(true);
       const userData = await fetchUserData();
       if (userData && userData.zip_code) {
-        console.log(userData.zip_code)
-        console.log(userData)
         const weatherData = await fetchWeatherData(userData.zip_code);
-        console.log(weatherData)
-        if (weatherData) {
-          setWeather(weatherData);
+        if (weatherData && weatherData.main) {
+          // Convert temperature and extract additional information
+          const formattedWeather = {
+            name: weatherData.name,
+            temp: kelvinToFahrenheit(weatherData.main.temp),
+            feels_like: kelvinToFahrenheit(weatherData.main.feels_like),
+            humidity: weatherData.main.humidity,
+            wind_speed: weatherData.wind.speed,
+            description: weatherData.weather[0].description,
+            icon: weatherData.weather[0].icon
+          };
+          setWeather(formattedWeather);
         }
       }
       setLoading(false);
     };
-
+  
     fetchData();
   }, []);
+  
+
 
   return (
     <>
@@ -73,12 +82,17 @@ const Dashboard = () => {
         ) : weather ? (
           <div className="weather-info text-center">
             <h4>Weather in {weather.name}:</h4>
-            <p>Temperature: {weather.main.temp}°C</p>
-            <p>Conditions: {weather.weather[0].description}</p>
+            <img src={`http://openweathermap.org/img/w/${weather.icon}.png`} alt="Weather icon" />
+            <p>Temperature: {weather.temp}°F</p>
+            <p>Feels Like: {weather.feels_like}°F</p>
+            <p>Humidity: {weather.humidity}%</p>
+            <p>Wind: {weather.wind_speed} km/h</p>
+            <p>Conditions: {weather.description}</p>
           </div>
         ) : (
           <p>Unable to load weather data.</p>
         )}
+
 
         <footer className="text-center mt-5">
           <p>Connect with us on social media</p>

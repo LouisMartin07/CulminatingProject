@@ -1,5 +1,9 @@
 import axios from 'axios';
 
+export const kelvinToFahrenheit = (kelvin) => {
+  return ((kelvin - 273.15) * 9/5 + 32).toFixed(2); // Convert and format to two decimal places
+};
+
 // Function to fetch user data
 export const fetchUserData = async () => {
   try {
