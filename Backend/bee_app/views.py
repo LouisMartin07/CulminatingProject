@@ -54,30 +54,37 @@ class BeeHiveRetrieveUpdateDelete(APIView):
 
 class SlideListCreate(APIView):
     def get(self, request, hive_id):
-        slides = Slide.objects.filter(hive_id=hive_id)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slides = Slide.objects.filter(hive=hive)
         serializer = SlideSerializer(slides, many=True)
         return Response(serializer.data)
 
     def post(self, request, hive_id):
-        formData = {
-            'hive': hive_id,
-            'slide_number': int(request.data.get('slideNumber')),
-            'notes': request.data.get('notes')
-        }
-        serializer = SlideSerializer(data=formData)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        serializer = SlideSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(hive_id=hive_id)
+            serializer.save(hive=hive)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SlideRetrieveUpdateDelete(APIView):
     def get(self, request, hive_id, pk):
-        slide = get_object_or_404(Slide, hive_id=hive_id, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slide = get_object_or_404(Slide, pk=pk, hive=hive)
         serializer = SlideSerializer(slide)
         return Response(serializer.data)
 
     def put(self, request, hive_id, pk):
-        slide = get_object_or_404(Slide, hive_id=hive_id, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slide = get_object_or_404(Slide, pk=pk, hive=hive)
         serializer = SlideSerializer(slide, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -85,7 +92,10 @@ class SlideRetrieveUpdateDelete(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, hive_id, pk):
-        slide = get_object_or_404(Slide, hive_id=hive_id, pk=pk)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slide = get_object_or_404(Slide, pk=pk, hive=hive)
         slide.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -93,28 +103,35 @@ class SlideRetrieveUpdateDelete(APIView):
 
 class BeeListCreate(APIView):
     def get(self, request, slide_id):
-        bees = Bee.objects.filter(slide_id=slide_id)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        slide = get_object_or_404(Slide, id=slide_id, hive__user=user)
+        bees = Bee.objects.filter(slide=slide)
         serializer = BeeSerializer(bees, many=True)
         return Response(serializer.data)
 
     def post(self, request, slide_id):
-        data = request.data.copy()
-        data['slide'] = slide_id  
-        serializer = BeeSerializer(data=data)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        slide = get_object_or_404(Slide, id=slide_id, hive__user=user)
+        serializer = BeeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(slide=slide)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    
+
 class BeeRetrieveUpdateDelete(APIView):
     def get(self, request, bee_id):
-        bee = get_object_or_404(Bee, id=bee_id)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        bee = get_object_or_404(Bee, id=bee_id, slide__hive__user=user)
         serializer = BeeSerializer(bee)
         return Response(serializer.data)
 
     def put(self, request, bee_id):
-        bee = get_object_or_404(Bee, id=bee_id)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        bee = get_object_or_404(Bee, id=bee_id, slide__hive__user=user)
         serializer = BeeSerializer(bee, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -122,6 +139,8 @@ class BeeRetrieveUpdateDelete(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, bee_id):
-        bee = get_object_or_404(Bee, id=bee_id)
+        user_email = request.query_params.get('email')
+        user = get_object_or_404(AppUser, email=user_email)
+        bee = get_object_or_404(Bee, id=bee_id, slide__hive__user=user)
         bee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

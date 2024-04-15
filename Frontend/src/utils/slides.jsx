@@ -1,9 +1,23 @@
-import api from './axios'
+import api from './axios';
 
-  // Add a slide to a specific hive
+// Helper function to get the token from localStorage
+function getAuthHeader() {
+  const token = localStorage.getItem('token');
+  return { Authorization: `Token ${token}` };
+}
+
+// Helper function to get the user email from localStorage
+function getUserEmail() {
+  return localStorage.getItem('user_email');
+}
+
+// Add a slide to a specific hive
 export const createSlide = async (hiveId, slideNumber, notes = '') => {
+  const email = getUserEmail();
   try {
-    const response = await api.post(`/hive/beehives/${hiveId}/slides/`, { slideNumber, notes });
+    const response = await api.post(`/hive/beehives/${hiveId}/slides/?email=${encodeURIComponent(email)}`, { slideNumber, notes }, {
+      headers: getAuthHeader()
+    });
     return response.data;  // Return the created slide data
   } catch (error) {
     console.error('Error adding slide:', error.response?.data);
@@ -13,8 +27,11 @@ export const createSlide = async (hiveId, slideNumber, notes = '') => {
 
 // Delete a slide from a hive
 export const deleteSlide = async (slideId) => {
+  const email = getUserEmail();
   try {
-    await api.delete(`/hive/slides/${slideId}/`);
+    await api.delete(`/hive/slides/${slideId}/?email=${encodeURIComponent(email)}`, {
+      headers: getAuthHeader()
+    });
     return true;  // Return true on successful deletion
   } catch (error) {
     console.error('Error deleting slide:', error.response?.data);
@@ -24,19 +41,25 @@ export const deleteSlide = async (slideId) => {
 
 // Fetch slides for a specific hive
 export const getSlides = async (hiveId) => {
-    try {
-      const response = await api.get(`/hive/beehives/${hiveId}/slides/`);
-      return response.data;  // Return list of slides in a specific hive
-    } catch (error) {
-      console.error('Error fetching slides:', error.response?.data);
-      return null;
-    }
-  };
+  const email = getUserEmail();
+  try {
+    const response = await api.get(`/hive/beehives/${hiveId}/slides/?email=${encodeURIComponent(email)}`, {
+      headers: getAuthHeader()
+    });
+    return response.data;  // Return list of slides in a specific hive
+  } catch (error) {
+    console.error('Error fetching slides:', error.response?.data);
+    return null;
+  }
+};
 
 // Update a specific slide
 export const updateSlide = async (hiveId, slideId, slideData) => {
+  const email = getUserEmail();
   try {
-    const response = await api.put(`/hive/beehives/${hiveId}/slides/${slideId}/`, slideData);
+    const response = await api.put(`/hive/beehives/${hiveId}/slides/${slideId}/?email=${encodeURIComponent(email)}`, slideData, {
+      headers: getAuthHeader()
+    });
     return response.data;  // Return the updated slide
   } catch (error) {
     console.error('Error updating slide:', error.response?.data);
