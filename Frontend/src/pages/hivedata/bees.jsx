@@ -42,11 +42,15 @@ const Bees = () => {
     };
 
     const handleDeleteBee = async (beeId) => {
-        const success = await deleteBee(hiveId, slideId, beeId);
-        if (success) {
-            loadBees(); // Reload bees to reflect the deletion
-        } else {
-            setError('Failed to delete bee.');
+        try {
+            const success = await deleteBee(hiveId, slideId, beeId);
+            if (success) {
+                await loadBees(); // Ensure bees are reloaded after deletion
+            } else {
+                throw new Error('Deletion failed at the backend.');
+            }
+        } catch (error) {
+            setError(error.message || 'Failed to delete bee.');
         }
     };
 

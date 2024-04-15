@@ -28,13 +28,17 @@ export const getBees = async (hiveId, slideId) => {
 // Function to create a new bee in a specific slide
 export const createBee = async (hiveId, slideId, beeData) => {
   const email = getUserEmail();
+  console.log("Sending data:", { email, role: beeData.role, quantity: beeData.quantity });
   try {
-    const response = await api.post(`/hive/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, beeData, {
-      headers: getAuthHeader()
+    const response = await api.post(`/hive/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, {
+      slide: slideId,
+      role: beeData.role,
+      quantity: beeData.quantity
     });
+
     return response.data;  // Return the newly created bee
   } catch (error) {
-    console.error('Error creating bee:', error.response?.data);
+    console.error('Error creating bee:', error.response ? JSON.stringify(error.response.data, null, 2) : error.message);
     return null;
   }
 };
@@ -43,7 +47,7 @@ export const createBee = async (hiveId, slideId, beeData) => {
 export const updateBeeQuantity = async (hiveId, slideId, beeId, newQuantity) => {
   const email = getUserEmail();
   try {
-    const response = await api.patch(`/hive/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, { quantity: newQuantity }, {
+    const response = await api.put(`/hive/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, { quantity: newQuantity }, {
       headers: getAuthHeader()
     });
     return response.data;  // Return updated bee data
@@ -60,9 +64,12 @@ export const deleteBee = async (hiveId, slideId, beeId) => {
     const response = await api.delete(`/hive/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, {
       headers: getAuthHeader()
     });
-    return response.data;  // Confirmation of deletion
+    if (response.status === 204) {
+      return true;  // Indicate successful deletion
+    }
+    return false; // Handle other statuses as failures
   } catch (error) {
     console.error('Error deleting bee:', error.response?.data);
-    return null;
+    return false;
   }
 };
