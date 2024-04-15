@@ -120,18 +120,20 @@ class SlideRetrieveUpdateDelete(APIView):
 #-------------------------------------------------------------------Bee Views --------------------------------------------------------
 
 class BeeListCreate(APIView):
-    def get(self, request, slide_id):
+    def get(self, request, hive_id, slide_id):
         user_email = request.query_params.get('email')
         user = get_object_or_404(AppUser, email=user_email)
-        slide = get_object_or_404(Slide, id=slide_id, hive__user=user)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slide = get_object_or_404(Slide, id=slide_id, hive=hive)
         bees = Bee.objects.filter(slide=slide)
         serializer = BeeSerializer(bees, many=True)
         return Response(serializer.data)
 
-    def post(self, request, slide_id):
+    def post(self, request, hive_id, slide_id):
         user_email = request.query_params.get('email')
         user = get_object_or_404(AppUser, email=user_email)
-        slide = get_object_or_404(Slide, id=slide_id, hive__user=user)
+        hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+        slide = get_object_or_404(Slide, id=slide_id, hive=hive)
         serializer = BeeSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(slide=slide)

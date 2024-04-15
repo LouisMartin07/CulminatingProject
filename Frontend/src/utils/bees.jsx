@@ -1,10 +1,21 @@
 import api from './axios';
 
+// Helper function to get the token from localStorage
+function getAuthHeader() {
+  const token = localStorage.getItem('token');
+  return { Authorization: `Token ${token}` };
+}
+
+// Helper function to get the user email from localStorage
+function getUserEmail() {
+  return localStorage.getItem('user_email');
+}
+
 // Function to fetch all bees associated with a specific slide
 export const getBees = async (hiveId, slideId) => {
   const email = getUserEmail();
   try {
-    const response = await api.get(`/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, {
+    const response = await api.get(`/hive/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, {
       headers: getAuthHeader()
     });
     return response.data;  // Return list of bees
@@ -18,7 +29,7 @@ export const getBees = async (hiveId, slideId) => {
 export const createBee = async (hiveId, slideId, beeData) => {
   const email = getUserEmail();
   try {
-    const response = await api.post(`/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, beeData, {
+    const response = await api.post(`/hive/beehives/${hiveId}/slides/${slideId}/bees/?email=${encodeURIComponent(email)}`, beeData, {
       headers: getAuthHeader()
     });
     return response.data;  // Return the newly created bee
@@ -32,7 +43,7 @@ export const createBee = async (hiveId, slideId, beeData) => {
 export const updateBeeQuantity = async (hiveId, slideId, beeId, newQuantity) => {
   const email = getUserEmail();
   try {
-    const response = await api.patch(`/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, { quantity: newQuantity }, {
+    const response = await api.patch(`/hive/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, { quantity: newQuantity }, {
       headers: getAuthHeader()
     });
     return response.data;  // Return updated bee data
@@ -46,7 +57,7 @@ export const updateBeeQuantity = async (hiveId, slideId, beeId, newQuantity) => 
 export const deleteBee = async (hiveId, slideId, beeId) => {
   const email = getUserEmail();
   try {
-    const response = await api.delete(`/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, {
+    const response = await api.delete(`/hive/beehives/${hiveId}/slides/${slideId}/bees/${beeId}/?email=${encodeURIComponent(email)}`, {
       headers: getAuthHeader()
     });
     return response.data;  // Confirmation of deletion
