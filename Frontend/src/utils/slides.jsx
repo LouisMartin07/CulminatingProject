@@ -12,18 +12,22 @@ function getUserEmail() {
 }
 
 // Add a slide to a specific hive
-export const createSlide = async (hiveId, slideNumber, notes = '') => {
+export const createSlide = async (hiveId, slide_number, notes = '') => {
   const email = getUserEmail();
   try {
-    const response = await api.post(`/hive/beehives/${hiveId}/slides/?email=${encodeURIComponent(email)}`, { slideNumber, notes }, {
+    const response = await api.post(`/hive/beehives/${hiveId}/slides/?email=${encodeURIComponent(email)}`, {
+      slide_number, // Correctly passing as a number
+      notes        // Correctly passing as a string
+    }, {
       headers: getAuthHeader()
     });
-    return response.data;  // Return the created slide data
+    return response.data;
   } catch (error) {
     console.error('Error adding slide:', error.response?.data);
     return null;
   }
 };
+
 
 // Delete a slide from a hive
 export const deleteSlide = async (slideId) => {

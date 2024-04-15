@@ -62,14 +62,21 @@ class SlideListCreate(APIView):
         return Response(serializer.data)
 
     def post(self, request, hive_id):
+        print("Request Data:", request.data)  
+        print("Query Params:", request.query_params) 
+
         user_email = request.query_params.get('email')
         user = get_object_or_404(AppUser, email=user_email)
         hive = get_object_or_404(BeeHive, id=hive_id, user=user)
+
+        request.data['hive'] = hive.id  
         serializer = SlideSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(hive=hive)
+            serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            print("Serializer Errors:", serializer.errors) 
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class SlideRetrieveUpdateDelete(APIView):
     def get(self, request, hive_id, pk):

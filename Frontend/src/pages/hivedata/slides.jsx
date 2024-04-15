@@ -7,7 +7,7 @@ const Slides = () => {
   const { hiveId } = useParams();
   const navigate = useNavigate();
   const [slides, setSlides] = useState([]);
-  const [slideNumber, setSlideNumber] = useState('');
+  const [slide_number, setSlideNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [editingSlide, setEditingSlide] = useState(null);
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const Slides = () => {
 
   const handleAddSlide = async (e) => {
     e.preventDefault();
-    const newSlide = await createSlide(hiveId, { slideNumber, notes });
+    const newSlide = await createSlide(hiveId, slide_number, notes);
     if (newSlide) {
       setSlideNumber('');
       setNotes('');
@@ -43,7 +43,7 @@ const Slides = () => {
 
   const handleUpdateSlide = async (e) => {
     e.preventDefault();
-    const updatedSlide = await updateSlide(hiveId, editingSlide.id, { slideNumber: editingSlide.slideNumber, notes: editingSlide.notes });
+    const updatedSlide = await updateSlide(hiveId, editingSlide.id, { slide_number: editingSlide.slide_number, notes: editingSlide.notes });
     if (updatedSlide) {
       loadSlides();
       setEditingSlide(null);
@@ -71,8 +71,8 @@ const Slides = () => {
             <Form.Label>Slide Number</Form.Label>
             <Form.Control
               type="number"
-              value={editingSlide.slideNumber}
-              onChange={(e) => setEditingSlide({ ...editingSlide, slideNumber: e.target.value })}
+              value={editingSlide.slide_number}
+              onChange={(e) => setEditingSlide({ ...editingSlide, slide_number: e.target.value })}
               required
             />
           </Form.Group>
@@ -95,7 +95,7 @@ const Slides = () => {
             <Form.Control
               type="number"
               placeholder="Enter slide number"
-              value={slideNumber}
+              value={slide_number}
               onChange={(e) => setSlideNumber(e.target.value)}
               required
             />
@@ -124,7 +124,7 @@ const Slides = () => {
         <tbody>
           {slides.map((slide) => (
             <tr key={slide.id}>
-              <td>{slide.slideNumber}</td>
+              <td>{slide.slide_number}</td>
               <td>{slide.notes}</td>
               <td>
                 <Button variant="secondary" onClick={() => handleEditSlide(slide)}>
