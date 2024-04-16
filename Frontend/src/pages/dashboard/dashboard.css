@@ -1,0 +1,28 @@
+:root {
+    --black: #333; 
+    --gold: #d4af37; 
+  }
+  
+  .dashboard-container {
+    color: var(--black);
+    background-color: #fff;
+  }
+  
+  .custom-button {
+    background-color: var(--gold);
+    border-color: var(--black);
+  }
+  
+  .custom-button:hover {
+    background-color: var(--black);
+    color: var(--gold);
+  }
+  
+  .event-card {
+    border: 1px solid var(--gold);
+  }
+  
+  .weather-info {
+    color: var(--gold);
+  }
+  

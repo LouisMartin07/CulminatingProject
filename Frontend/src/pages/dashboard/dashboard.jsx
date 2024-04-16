@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { fetchUserData , fetchWeatherData, kelvinToFahrenheit } from '../../utils/weather'; 
+import { fetchUserData, fetchWeatherData, kelvinToFahrenheit } from '../../utils/weather'; 
+import './dashboard.css'; // Import custom CSS for styling
 
 const Dashboard = () => {
   const [weather, setWeather] = useState(null);
@@ -17,7 +18,6 @@ const Dashboard = () => {
       if (userData && userData.zip_code) {
         const weatherData = await fetchWeatherData(userData.zip_code);
         if (weatherData && weatherData.main) {
-          // Convert temperature and extract additional information
           const formattedWeather = {
             name: weatherData.name,
             temp: kelvinToFahrenheit(weatherData.main.temp),
@@ -36,25 +36,23 @@ const Dashboard = () => {
     fetchData();
   }, []);
   
-
-
   return (
     <>
-      <Container fluid className="mt-5">
+      <Container fluid className="mt-5 dashboard-container">
         <header className="text-center mt-5 mb-4">
           <h1>Welcome to the Apiary Site</h1>
           <p>Introduction to the site and its features. Explore what you can do below.</p>
           <div className="d-flex justify-content-center mt-3">
             <Button
-              variant="primary"
-              className="mx-2"
+              variant="gold"
+              className="mx-2 custom-button"
               onClick={() => handleButtonClick('newVoiceMeme')}
             >
               Make a New Voice Memo
             </Button>
             <Button
-              variant="secondary"
-              className="mx-2"
+              variant="gold"
+              className="mx-2 custom-button"
               onClick={() => handleButtonClick('newMemo')}
             >
               Type a New Memo
@@ -65,7 +63,7 @@ const Dashboard = () => {
         <Row className="mt-4">
           {Array.from({ length: 3 }).map((_, index) => (
             <Col key={index} md={4}>
-              <Card>
+              <Card className="mb-4 event-card">
                 <Card.Body>
                   <Card.Title>{`Event ${index + 1}`}</Card.Title>
                   <Card.Text>
@@ -93,14 +91,13 @@ const Dashboard = () => {
           <p>Unable to load weather data.</p>
         )}
 
-
         <footer className="text-center mt-5">
           <p>Connect with us on social media</p>
           <Button variant="link">Facebook</Button>
           <Button variant="link">Twitter</Button>
           <Button variant="link">Instagram</Button>
           <div className="mt-3">
-            <Button variant="outline-secondary" onClick={() => handleButtonClick('aboutTheAuthor')}>
+            <Button variant="outline-gold" onClick={() => handleButtonClick('aboutTheAuthor')}>
               About the Author
             </Button>
           </div>
@@ -111,3 +108,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

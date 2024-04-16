@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { userRegistration } from '../../utils/account';
+
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 

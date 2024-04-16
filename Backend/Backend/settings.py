@@ -15,10 +15,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-# Application definition
-SITE_ID = 2
-#identifies which App we are using for our login / have to use 2 becuase 1 is taken up by the default 
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -143,26 +139,3 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend'
 )
-#specifies im using Djando and allauth backends 
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL ='/'
-
-# Can remove once fixing weather API 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',  # Ensure this is set to DEBUG to see all log messages
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        '': {  # Root logger
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}

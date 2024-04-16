@@ -31,15 +31,16 @@ Notes for Dev's
     1. Used bootstrap for all page styling, and if desired use App & index.css for entire webapp styling 
     2. The Navbar will is based off the userState if someone is logged in or not and changes dispaly based on that  
     3. hives has its own util folder and page folder to group similiar things 
-    4. The weather API uses token auth, however the bee API uses email auth (will eventually be all token Auth)
+    4. There is remniscent code of token auth since I was going that route but switched to email auth (need to clea nit up)
 
 Refactor
     1. Group hive pages (possibly make it all one page so the user doesnt have to click around so much by make it like a nested table somehow)
     2. Alot of the styling for the hives pages is the same, maybe refactor and just import code into it
 
 To get Answered
-    1. Folder structure - Louise tips
-    2. UI Styling
+    1. Folder structure - Louise tips - Done
+    2. UI Styling - Done
+    3. How do I include a password to comfirm the user? Find a way around it to just use Token?
 
 Struggles
     1. Poor planning - Multiple unexpected layout issues 
@@ -47,8 +48,10 @@ Struggles
         1B. did 3 pages 1 for each aspect of the hive rather then 1 page
         1C. didn't give good forethought on how I would utilize notes and have to create a page/model for it
         1D. didn't think of where to integrate the weather into my web app
-    2. Weather API utilizing 
+    2. Take more time to read API docs (Was convering a zip code to a lat long when I didnt need to)
     3. API authentication - I have a mix of token and email authentication right now because I couldnt get token to work for my Bee API
+    4. Deprecated packages (google login with react)
+
     
 Stretch Goals
     1. Set up some VisionAI so beekeeper can take slide picture and upload to website, and website will indetail break down slide
