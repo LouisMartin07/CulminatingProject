@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSlides, createSlide, updateSlide, deleteSlide } from '../../utils/slides';
-import { Form, Button, Table, Alert } from 'react-bootstrap';
+import { getSlides, createSlide, updateSlide, deleteSlide } from '../../utils/hivedata/slides';
+import { Form, Button, Table, Alert, Modal } from 'react-bootstrap';
 
 const Slides = () => {
   const { hiveId } = useParams();
@@ -11,6 +11,8 @@ const Slides = () => {
   const [notes, setNotes] = useState('');
   const [editingSlide, setEditingSlide] = useState(null);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSlideId, setSelectedSlideId] = useState(null);
 
   useEffect(() => {
     loadSlides();
@@ -37,35 +39,24 @@ const Slides = () => {
     }
   };
 
-  const handleEditSlide = (slide) => {
-    setEditingSlide({ ...slide });
+  const handleDeleteConfirmation = (slideId) => {
+    setSelectedSlideId(slideId);
+    setShowModal(true);
   };
 
-  const handleUpdateSlide = async (e) => {
-    e.preventDefault();
-    const updatedSlide = await updateSlide(hiveId, editingSlide.id, { slide_number: editingSlide.slide_number, notes: editingSlide.notes });
-    if (updatedSlide) {
+  const handleDeleteSlide = async () => {
+    const result = await deleteSlide(hiveId, selectedSlideId);
+    if (result.success) {
       loadSlides();
-      setEditingSlide(null);
+      setShowModal(false);
     } else {
-      setError('Failed to update slide.');
-    }
-  };
-
-  const handleDeleteSlide = async (slideId) => {
-    if (window.confirm("Are you sure you want to delete this slide?")) {
-      const result = await deleteSlide(hiveId, slideId);
-      if (result.success === false) {
-        setError(`Failed to delete slide: ${result.message}`);
-      } else {
-        loadSlides();
-      }
+      setError(`Failed to delete slide: ${result.message}`);
     }
   };
 
   return (
     <div className="container mt-5">
-      <h1>Slide Management for Hive {hiveId}</h1>
+      <h1 className="text-warning">Slide Management for Hive {hiveId}</h1>
       {error && <Alert variant="danger">{error}</Alert>}
       {editingSlide ? (
         <Form onSubmit={handleUpdateSlide}>
@@ -76,6 +67,7 @@ const Slides = () => {
               value={editingSlide.slide_number}
               onChange={(e) => setEditingSlide({ ...editingSlide, slide_number: e.target.value })}
               required
+              className="bg-dark text-white"
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -85,10 +77,11 @@ const Slides = () => {
               rows="3"
               value={editingSlide.notes}
               onChange={(e) => setEditingSlide({ ...editingSlide, notes: e.target.value })}
+              className="bg-dark text-white"
             />
           </Form.Group>
-          <Button variant="primary" type="submit">Update Slide</Button>
-          <Button variant="secondary" onClick={() => setEditingSlide(null)}>Cancel</Button>
+          <Button variant="outline-warning" type="submit">Update Slide</Button>
+          <Button variant="outline-secondary" onClick={() => setEditingSlide(null)}>Cancel</Button>
         </Form>
       ) : (
         <Form onSubmit={handleAddSlide}>
@@ -100,6 +93,7 @@ const Slides = () => {
               value={slide_number}
               onChange={(e) => setSlideNumber(e.target.value)}
               required
+              className="bg-dark text-white"
             />
           </Form.Group>
           <Form.Group className="mb-3">
@@ -110,12 +104,13 @@ const Slides = () => {
               placeholder="Enter any notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
+              className="bg-dark text-white"
             />
           </Form.Group>
-          <Button variant="primary" type="submit">Add Slide</Button>
+          <Button variant="outline-warning" type="submit">Add Slide</Button>
         </Form>
       )}
-      <Table striped bordered hover className="mt-3">
+      <Table striped bordered hover variant="dark" className="mt-3 text-warning">
         <thead>
           <tr>
             <th>Slide Number</th>
@@ -129,13 +124,13 @@ const Slides = () => {
               <td>{slide.slide_number}</td>
               <td>{slide.notes}</td>
               <td>
-                <Button variant="secondary" onClick={() => handleEditSlide(slide)}>
+                <Button variant="outline-secondary" onClick={() => setEditingSlide(slide)}>
                   Edit
                 </Button>
-                <Button variant="danger" onClick={() => handleDeleteSlide(slide.id)}>
+                <Button variant="outline-danger" onClick={() => handleDeleteConfirmation(slide.id)}>
                   Delete
                 </Button>
-                <Button variant="info" onClick={() => navigate(`/hives/${hiveId}/slides/${slide.id}/bees`)}>
+                <Button variant="outline-info" onClick={() => navigate(`/hives/${hiveId}/slides/${slide.id}/bees`)}>
                   Manage Bees
                 </Button>
               </td>
@@ -143,6 +138,20 @@ const Slides = () => {
           ))}
         </tbody>
       </Table>
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Slide</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this slide?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteSlide}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

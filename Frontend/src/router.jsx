@@ -10,7 +10,7 @@ import Hives from "./pages/hivedata/hives";
 import Slides from "./pages/hivedata/slides";
 import Bees from "./pages/hivedata/bees";
 import Calendar from "./pages/calendar/calendar";
-// import Analytics from "./pages/analytics/Analytics";
+import Analytics from "./pages/analytics/analytics";
 
 const router = createBrowserRouter([
   {
@@ -54,10 +54,10 @@ const router = createBrowserRouter([
         path: "calendar",
         element: <Calendar />,
       },
-      // {
-      //   path: "analytics",
-      //   element: <Analytics />,
-      // },
+      {
+        path: "analytics",
+        element: <Analytics />,
+      },
     ],
   },
 ]);

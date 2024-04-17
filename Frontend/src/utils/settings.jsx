@@ -4,8 +4,9 @@ import api from './axios'
 export const updateUserEmail = async (newEmail) => {
     const token = localStorage.getItem("token");
     if (token) {
+      console.log("Updating email with:", newEmail)
       try {
-        const response = await api.put("users/update/email/", { email: newEmail }, {
+        const response = await api.put("users/profile/update/email/", { email: newEmail }, {
           headers: { Authorization: `Token ${token}` }
         });
         // Handle response, e.g., update local storage, state, etc.
@@ -22,7 +23,7 @@ export const updateUserEmail = async (newEmail) => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const response = await api.put("users/update/username/", { username: newUsername }, {
+        const response = await api.put("users/profile/update/username/", { username: newUsername }, {
           headers: { Authorization: `Token ${token}` }
         });
         // Handle response
@@ -35,11 +36,11 @@ export const updateUserEmail = async (newEmail) => {
   };
   
   // Utility function to change the user's password
-  export const changeUserPassword = async (currentPassword, newPassword) => {
+  export const updateUserPassword = async (currentPassword, newPassword) => {
     const token = localStorage.getItem("token");
     if (token) {
       try {
-        const response = await api.put("users/update/password/", { current_password: currentPassword, new_password: newPassword }, {
+        const response = await api.put("users/profile/update/password/", { current_password: currentPassword, new_password: newPassword }, {
           headers: { Authorization: `Token ${token}` }
         });
         // Handle response

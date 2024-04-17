@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import Modal from 'react-modal';
 import { fetchEvents, createEvent, updateEvent, deleteEvent, formatDate } from '../../utils/calendar';
 
-Modal.setAppElement('#root'); // Necessary for screen readers
+Modal.setAppElement('#root');
 
 function CalendarComponent() {
   const [events, setEvents] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [calendarView, setCalendarView] = useState('dayGridMonth'); // Default view
 
   useEffect(() => {
     loadEvents();
@@ -20,32 +22,27 @@ function CalendarComponent() {
     const fetchedEvents = await fetchEvents();
     const formattedEvents = fetchedEvents.map(event => ({
       ...event,
-      start: event.start_time, // Rename start_time to start
-      end: event.end_time     // Rename end_time to end
+      start: event.start_time,
+      end: event.end_time
     }));
     setEvents(formattedEvents);
-    console.log("Formatted events:", formattedEvents); // Verify the formatted events
   };
 
   const handleDateClick = (arg) => {
-    // Set default properties for a new event
     setSelectedEvent({ id: null, name: '', start: arg.date, end: arg.date });
     setModalIsOpen(true);
   };
 
   const handleEventClick = ({ event }) => {
-    // Load the event details into the selectedEvent state
     setSelectedEvent({
-        id: event.id,
-        title: event.title,
-        start: event.start,
-        end: event.end,
-        description: event.extendedProps.description,
-        // Include other properties as needed
+      id: event.id,
+      title: event.title,
+      start: event.start,
+      end: event.end,
+      description: event.extendedProps.description,
     });
     setModalIsOpen(true);
-};
-
+  };
 
   const closeModal = () => {
     setModalIsOpen(false);
@@ -56,15 +53,10 @@ function CalendarComponent() {
     event.preventDefault();
     const formData = new FormData(event.target);
     const eventData = {
-      title: formData.get('title'),  
+      title: formData.get('title'),
       start_time: formData.get('start'),
       end_time: formData.get('end'),
-   };
-   console.log('Event data being sent:', eventData);
-   if (!eventData.title) {
-     console.error('Title is missing!');
-   }
-    // Check if selectedEvent is not null and has an id property
+    };
     if (selectedEvent && selectedEvent.id) {
       await updateEvent(selectedEvent.id, eventData);
     } else {
@@ -75,41 +67,43 @@ function CalendarComponent() {
   };
 
   return (
-    <div className='calendar-content'>
-      <button onClick={() => setModalIsOpen(true)}>Add Event</button> {/* Visible button for adding events */}
+    <div className='calendar-content' style={{ color: '#dcbf53', backgroundColor: '#222' }}>
+      <div className="toolbar">
+        <button onClick={() => setModalIsOpen(true)}>Add Event</button>
+      </div>
       <FullCalendar
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
+        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+        initialView={calendarView}
         events={events}
         dateClick={handleDateClick}
         eventClick={handleEventClick}
+        headerToolbar={{
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridDay,timeGridWeek,dayGridMonth'
+        }}
+        themeSystem='bootstrap'
       />
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Event Modal"
+        style={{
+          content: {
+            color: 'black',
+            background: 'gold'
+          }
+        }}
       >
         <form onSubmit={handleFormSubmit}>
           <label htmlFor="title">Event Title:</label>
           <input id="title" name="title" type="text" defaultValue={selectedEvent?.title || ''} required />
           
           <label htmlFor="start">Start Date:</label>
-          <input 
-            id="start" 
-            name="start" 
-            type="date" 
-            defaultValue={selectedEvent ? formatDate(selectedEvent.start) : ''} 
-            required 
-          />
+          <input id="start" name="start" type="date" defaultValue={selectedEvent ? formatDate(selectedEvent.start) : ''} required />
           
           <label htmlFor="end">End Date:</label>
-          <input 
-            id="end" 
-            name="end" 
-            type="date" 
-            defaultValue={selectedEvent ? formatDate(selectedEvent.end) : ''} 
-            required 
-          />
+          <input id="end" name="end" type="date" defaultValue={selectedEvent ? formatDate(selectedEvent.end) : ''} required />
 
           {selectedEvent?.id ? (
             <>

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { createHive, getHives, deleteHive } from '../../utils/hives';
-import { Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate instead of useHistory
+import { createHive, getHives, deleteHive } from '../../utils/hivedata/hives';
+import { Form, Button, Modal } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const Hives = () => {
   const [name, setName] = useState('');
   const [location, setLocation] = useState('');
   const [hives, setHives] = useState([]);
-  const navigate = useNavigate(); // Use useNavigate here
+  const [showModal, setShowModal] = useState(false);
+  const [selectedHiveId, setSelectedHiveId] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadHives();
@@ -28,21 +30,23 @@ const Hives = () => {
     }
   };
 
-  const handleDelete = async (hiveId) => {
-    const success = await deleteHive(hiveId);
-    if (success) {
-      loadHives();
-    }
+  const handleDeleteConfirmation = (hiveId) => {
+    setSelectedHiveId(hiveId);
+    setShowModal(true);
   };
 
-  const handleManageSlides = (hiveId) => {
-    navigate(`/hives/${hiveId}/slides`); // Use navigate instead of history.push
+  const handleDeleteHive = async () => {
+    const success = await deleteHive(selectedHiveId);
+    if (success) {
+      loadHives();
+      setShowModal(false);
+    }
   };
 
   return (
     <div className="container mt-5">
-      <h1>Hive Management</h1>
-      <Form onSubmit={handleCreateHive}>
+      <h1 className="text-warning">Hive Management</h1>
+      <Form onSubmit={handleCreateHive} className="mb-3">
         <Form.Group className="mb-3">
           <Form.Label>Hive Name</Form.Label>
           <Form.Control
@@ -50,6 +54,7 @@ const Hives = () => {
             placeholder="Enter hive name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            className="bg-dark text-white"
           />
         </Form.Group>
         <Form.Group className="mb-3">
@@ -59,26 +64,41 @@ const Hives = () => {
             placeholder="Enter location"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            className="bg-dark text-white"
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <Button variant="outline-warning" type="submit">
           Create Hive
         </Button>
       </Form>
       <div>
-        <h2>Existing Hives</h2>
+        <h2 className="text-warning">Existing Hives</h2>
         {hives.map((hive) => (
-          <div key={hive.id} className="mb-3">
+          <div key={hive.id} className="mb-3 bg-dark text-white p-3 rounded">
             <span>{hive.name} - {hive.location}</span>
-            <Button variant="secondary" onClick={() => handleManageSlides(hive.id)} className="ms-2">
+            <Button variant="secondary" onClick={() => navigate(`/hives/${hive.id}/slides`)} className="ms-2">
               Manage Slides
             </Button>
-            <Button variant="danger" onClick={() => handleDelete(hive.id)} className="ms-2">
+            <Button variant="danger" onClick={() => handleDeleteConfirmation(hive.id)} className="ms-2">
               Delete Hive
             </Button>
           </div>
         ))}
       </div>
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Delete Hive</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this hive?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteHive}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

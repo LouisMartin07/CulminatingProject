@@ -13,6 +13,7 @@
     "@fullcalendar/daygrid": "^6.1.11",
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
+    "@fullcalendar/timegrid": "^6.1.11",
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",

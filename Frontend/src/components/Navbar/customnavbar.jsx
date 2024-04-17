@@ -29,7 +29,7 @@ const CustomNavbar = ({ setUser, user }) => {
     <Navbar bg="dark" variant="dark" expand="lg" fixed="top" style={{ boxShadow: '0 4px 6px rgba(0,0,0,.1)' }}>
       <Container>
         <Navbar.Brand as={Link} to="/" style={{ fontWeight: 'bold', color: 'orange' }}>
-          AllTheBuzz
+          AllTheBuzz or NewBee
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">

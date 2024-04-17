@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Alert, Card, Container, Row, Col } from 'react-bootstrap';
-import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa'; // You need to install react-icons if not already installed
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
+import { updateUserEmail, updateUserPassword, updateUsername } from '../../utils/settings';
 
 const Settings = () => {
   const [username, setUsername] = useState('');
@@ -11,12 +12,57 @@ const Settings = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setMessage({ text: 'Profile updated successfully.', type: 'success' });
-  };
+    let successMessages = [];
+    let hasError = false;
+
+    if (username) { // Check if username is provided to update
+        try {
+            const usernameUpdate = await updateUsername(username);
+            if (usernameUpdate) {
+                successMessages.push('Username updated successfully.');
+            } else {
+                hasError = true;
+            }
+        } catch (error) {
+            console.error("Update username error:", error);
+            hasError = true;
+        }
+    }
+
+    if (email) { // Check if email is provided to update
+        try {
+            const emailUpdate = await updateUserEmail(email);
+            if (emailUpdate) {
+                successMessages.push('Email updated successfully.');
+            } else {
+                hasError = true;
+            }
+        } catch (error) {
+            console.error("Update email error:", error);
+            hasError = true;
+        }
+    }
+
+    if (successMessages.length > 0 && !hasError) {
+        setMessage({ text: successMessages.join(' '), type: 'success' });
+    } else {
+        setMessage({ text: 'Failed to update profile.', type: 'danger' });
+    }
+};
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-    setMessage({ text: 'Password changed successfully.', type: 'success' });
+    try {
+      const passwordChangeResponse = await updateUserPassword(currentPassword, newPassword);
+      if (passwordChangeResponse) {
+        setMessage({ text: 'Password changed successfully.', type: 'success' });
+      } else {
+        setMessage({ text: 'Failed to change password.', type: 'danger' });
+      }
+    } catch (error) {
+      console.error("Password change error:", error);
+      setMessage({ text: 'Password change failed due to server error.', type: 'danger' });
+    }
   };
 
   return (

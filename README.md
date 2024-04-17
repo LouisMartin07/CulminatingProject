@@ -62,8 +62,8 @@ Struggles
     2. Take more time to read API docs (Was convering a zip code to a lat long when I didnt need to)
     3. API authentication - I have a mix of token and email authentication right now because I couldnt get token to work for my Bee API
     4. Deprecated packages (google login with react) and variety of packages options to do it was overwhelming
+    5. Kept poor track of libraries and packages I installed
 
-    
 Stretch Goals
     1. Set up some VisionAI so beekeeper can take slide picture and upload to website, and website will indetail break down slide
     2. Use google anayltics to take weather metrics and inputted slide data to show possible correlations 
@@ -73,5 +73,6 @@ Stretch Goals
     5. Integrate honey production into hive table
 
 To Do
-    1. Fix the settings so it actually updates whatever info it says its updating
+    1. Adjust the narritive, What makes my app better then other bee apps (the main focus and how its presented)
     2. Fix the calendar so it adds date on the right date and properly allows deletion and editing 
+    3. Add links to the footer URLS or just get rid of them (same with the about the author)

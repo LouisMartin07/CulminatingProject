@@ -1,4 +1,4 @@
-import api from './axios';
+import api from '../axios';
 
 // Helper function to get the token from localStorage
 function getAuthHeader() {

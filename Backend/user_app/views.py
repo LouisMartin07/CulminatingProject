@@ -62,8 +62,9 @@ class LogOut(APIView):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
         
+# --------------------------------------------------- View Functionality Split -----------------------------------------------
 
-class UserInfo(APIView):
+class UserInfoUpdate(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -115,3 +116,53 @@ class UserInfo(APIView):
             return Response({"message": "User info updated successfully."}, status=status.HTTP_200_OK)
         except ValidationError as e:
             return Response({"errors": e.message_dict}, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdatePassword(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        if current_password and new_password:
+            if user.check_password(current_password):
+                user.set_password(new_password)
+                user.save()
+                return Response({"message": "Password changed successfully."}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'Incorrect current password.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Required password details not provided."}, status=status.HTTP_400_BAD_REQUEST)
+    
+class UpdateUsername(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        new_username = request.data.get('username', None)
+        if new_username:
+            # Check if the new username is unique
+            if AppUser.objects.filter(username=new_username).exclude(id=user.id).exists():
+                return Response({'error': 'This username is already taken.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.username = new_username
+            user.save()
+            return Response({"message": "Username updated successfully."}, status=status.HTTP_200_OK)
+        return Response({"error": "No username provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+class UpdateEmail(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user = request.user
+        print(request.data)
+        new_email = request.data.get('email', None)
+        if new_email:
+            # Check if the new email is unique
+            if AppUser.objects.filter(email=new_email).exclude(id=user.id).exists():
+                return Response({'error': 'This email is already in use.'}, status=status.HTTP_400_BAD_REQUEST)
+            user.email = new_email
+            user.save()
+            return Response({"message": "Email updated successfully."}, status=status.HTTP_200_OK)
+        return Response({"error": "No email provided."}, status=status.HTTP_400_BAD_REQUEST)
