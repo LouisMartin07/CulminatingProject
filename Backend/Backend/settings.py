@@ -22,32 +22,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.sites',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken', 
+    'dj_rest_auth',
     'user_app',
     'note_app',
     'bee_app',
+    'calendar_app',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.google', # stretch goal to figure out the horrors that are google login
 ]
 
-#per provider and utilize scopes encopassing your login
-SOCIALACCOUNT_PROVIDERS = {
-    'google':{
-        'SCOPE': [
-            'profile',
-            'email',
-            'https://www.googleapis.com/auth/calendar',
-        ],
-        'AUTH_PARAMS': {'access_type':'online'}
-    }
-}
-
 AUTH_USER_MODEL = 'user_app.AppUser'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -135,7 +125,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
 AUTHENTICATION_BACKENDS = (
+    # This is Django's default authentication backend that handles username/password authentication. 
+    # It’s necessary for maintaining Django’s built-in authentication mechanisms, 
+    # which you might still use for parts of your admin or other non-OAuth parts of your application.
     'django.contrib.auth.backends.ModelBackend',
+    # This backend is provided by django-allauth and is specifically designed to handle authentication tasks related to social accounts, 
+    # #including OAuth-based authentication. It supports the extended functionalities that allauth provides like email verification, social account management, and more.
     'allauth.account.auth_backends.AuthenticationBackend'
 )
+

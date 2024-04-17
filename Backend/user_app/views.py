@@ -1,4 +1,3 @@
-import logging # for for user info troubleshooting
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
@@ -9,7 +8,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError
 from .models import AppUser
-
 
 class SignUp(APIView):
     def post(self, request):
@@ -64,7 +62,6 @@ class LogOut(APIView):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
         
-logger = logging.getLogger(__name__)
 
 class UserInfo(APIView):
     authentication_classes = [TokenAuthentication]
@@ -78,10 +75,9 @@ class UserInfo(APIView):
                 'email': user.email,
                 'zip_code': user.zip_code  
             }
-            logger.debug("User data retrieved successfully: %s", user_data)
             return Response(user_data)
         except AttributeError as e:
-            logger.error("AttributeError in GET request: %s", str(e))
+            # If the user is missing an attribute, return an error message
             return Response({'error': f'Missing attribute: {str(e)}'}, status=404)
     
     def put(self, request):

@@ -15,11 +15,11 @@ const SignUpPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the form from causing a page reload
+    e.preventDefault();
     const user = await userRegistration(email, password, display_name, zip_code);
     if (user) {
-      setUser(user); // If login is successful, update the user context
-      navigate('/dashboard')
+      setUser(user);
+      navigate('/dashboard');
     } else {
       console.error("Registration failed");
     }
@@ -29,8 +29,7 @@ const SignUpPage = () => {
     <div className="signup-container">
       <h1>Sign Up</h1>
       <Form onSubmit={handleSubmit}>
-
-        {/* Set email */}
+        {/* Existing form fields */}
         <Form.Group className="mb-3" controlId="signupEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -40,8 +39,6 @@ const SignUpPage = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
-
-        {/* Set password */}
         <Form.Group className="mb-3" controlId="signupPassword">
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -51,8 +48,6 @@ const SignUpPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-
-        {/* Set displayname */}
         <Form.Group className="mb-3" controlId="signupDisplayName">
           <Form.Label>Display Name</Form.Label>
           <Form.Control
@@ -62,8 +57,6 @@ const SignUpPage = () => {
             onChange={(e) => setDisplay_name(e.target.value)}
           />
         </Form.Group>
-
-        {/* Set zipcode */}
         <Form.Group className="mb-3" controlId="signupZipCode">
           <Form.Label>Zip Code</Form.Label>
           <Form.Control
@@ -73,8 +66,8 @@ const SignUpPage = () => {
             onChange={(e) => setZip_Code(e.target.value)}
           />
         </Form.Group>
-
         <Button variant="primary" type="submit">Sign Up</Button>
+      
         <div className="mt-3">
           Already have an account? <Link to="/login">Log In</Link>
         </div>

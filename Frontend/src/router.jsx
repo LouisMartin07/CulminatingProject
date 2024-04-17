@@ -9,7 +9,7 @@ import Settings from "./pages/settings/settings";
 import Hives from "./pages/hivedata/hives";
 import Slides from "./pages/hivedata/slides";
 import Bees from "./pages/hivedata/bees";
-// import Calendar from "./pages/calendar/Calendar";
+import Calendar from "./pages/calendar/calendar";
 // import Analytics from "./pages/analytics/Analytics";
 
 const router = createBrowserRouter([
@@ -50,10 +50,10 @@ const router = createBrowserRouter([
         path: "hives/:hiveId/slides/:slideId/bees",
         element: <Bees />,
       },
-      // {
-      //   path: "calendar",
-      //   element: <Calendar />,
-      // },
+      {
+        path: "calendar",
+        element: <Calendar />,
+      },
       // {
       //   path: "analytics",
       //   element: <Analytics />,

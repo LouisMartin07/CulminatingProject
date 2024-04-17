@@ -11,13 +11,12 @@ const LogInPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent the default form submission
-    const user = await userLogIn(email, password); // Attempt to log in
+    e.preventDefault();
+    const user = await userLogIn(email, password);
     if (user) {
-      setUser(user); // If login is successful, update the user context
-      navigate('/dashboard')
+      setUser(user);
+      navigate('/dashboard');
     } else {
       console.error("Login failed");
     }
@@ -27,6 +26,7 @@ const LogInPage = () => {
     <div className="login-container">
       <h1>Log In</h1>
       <Form onSubmit={handleSubmit}>
+        {/* Existing form fields for email and password */}
         <Form.Group className="mb-3" controlId="loginEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -46,6 +46,7 @@ const LogInPage = () => {
           />
         </Form.Group>
         <Button variant="primary" type="submit">Log In</Button>
+
         <div className="mt-3">
           Don't have an account? <Link to="/signup">Sign Up</Link>
         </div>
