@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import Modal from 'react-modal';
-import { fetchEvents, createEvent, updateEvent, deleteEvent, formatDate } from '../../utils/calendar';
+import { fetchEvents, createEvent, updateEvent, deleteEvent } from '../../utils/calendar';
 
 Modal.setAppElement('#root');
 
@@ -12,7 +12,7 @@ function CalendarComponent() {
   const [events, setEvents] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [calendarView, setCalendarView] = useState('dayGridMonth'); // Default view
+  const [calendarView, setCalendarView] = useState('dayGridMonth');
 
   useEffect(() => {
     loadEvents();
@@ -20,16 +20,15 @@ function CalendarComponent() {
 
   const loadEvents = async () => {
     const fetchedEvents = await fetchEvents();
-    const formattedEvents = fetchedEvents.map(event => ({
+    setEvents(fetchedEvents.map(event => ({
       ...event,
       start: event.start_time,
       end: event.end_time
-    }));
-    setEvents(formattedEvents);
+    })));
   };
 
   const handleDateClick = (arg) => {
-    setSelectedEvent({ id: null, name: '', start: arg.date, end: arg.date });
+    setSelectedEvent({ id: null, title: '', start: arg.date, end: arg.date });
     setModalIsOpen(true);
   };
 
@@ -58,12 +57,18 @@ function CalendarComponent() {
       end_time: formData.get('end'),
     };
     if (selectedEvent && selectedEvent.id) {
-      await updateEvent(selectedEvent.id, eventData);
+      const updated = await updateEvent(selectedEvent.id, eventData);
+      if (updated) loadEvents();  // Reload events after successful update
     } else {
-      await createEvent(eventData);
+      const created = await createEvent(eventData);
+      if (created) loadEvents();  // Reload events after successful creation
     }
-    loadEvents();
     closeModal();
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    const deleted = await deleteEvent(eventId);
+    if (deleted) loadEvents();  // Reload events after successful deletion
   };
 
   return (
@@ -84,35 +89,51 @@ function CalendarComponent() {
         }}
         themeSystem='bootstrap'
       />
-      <Modal
+       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         contentLabel="Event Modal"
         style={{
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            zIndex: 1050 // Ensure this is high enough or the modal wont work
+          },
           content: {
-            color: 'black',
-            background: 'gold'
+            top: '50%',
+            left: '50%',
+            right: 'auto',
+            bottom: 'auto',
+            marginRight: '-50%',
+            transform: 'translate(-50%, -50%)',
+            border: '1px solid #ccc',
+            padding: '20px'
           }
         }}
       >
-        <form onSubmit={handleFormSubmit}>
-          <label htmlFor="title">Event Title:</label>
-          <input id="title" name="title" type="text" defaultValue={selectedEvent?.title || ''} required />
-          
-          <label htmlFor="start">Start Date:</label>
-          <input id="start" name="start" type="date" defaultValue={selectedEvent ? formatDate(selectedEvent.start) : ''} required />
-          
-          <label htmlFor="end">End Date:</label>
-          <input id="end" name="end" type="date" defaultValue={selectedEvent ? formatDate(selectedEvent.end) : ''} required />
+        <form onSubmit={handleFormSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div>
+            <label htmlFor="title">Event Title:</label>
+            <input id="title" name="title" type="text" defaultValue={selectedEvent?.title || ''} required />
+          </div>
+          <div>
+            <label htmlFor="start">Start Date:</label>
+            <input id="start" name="start" type="date" defaultValue={selectedEvent ?(selectedEvent.start) : ''} required />
+          </div>
+          <div>
+            <label htmlFor="end">End Date:</label>
+            <input id="end" name="end" type="date" defaultValue={selectedEvent ?(selectedEvent.end) : ''} required />
+          </div>
+          <div>
+            {selectedEvent?.id ? (
+              <>
+                <button type="submit">Update Event</button>
+                <button type="button" onClick={() => handleDeleteEvent(selectedEvent.id)}>Delete Event</button>
 
-          {selectedEvent?.id ? (
-            <>
-              <button type="submit">Update Event</button>
-              <button type="button" onClick={() => deleteEvent(selectedEvent.id)}>Delete Event</button>
-            </>
-          ) : (
-            <button type="submit">Create Event</button>
-          )}
+              </>
+            ) : (
+              <button type="submit">Create Event</button>
+            )}
+          </div>
         </form>
         <button onClick={closeModal}>Close</button>
       </Modal>

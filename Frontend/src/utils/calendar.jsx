@@ -1,9 +1,5 @@
 import api from './axios';
 
-export function formatDate(date) {
-    return new Date(date).toISOString().slice(0, 10);
-  }
-
 // Helper function to get the token from localStorage
 function getAuthHeader() {
   const token = localStorage.getItem('token');
@@ -47,7 +43,7 @@ export const fetchEvents = async () => {
 export const updateEvent = async (eventId, eventData) => {
   try {
     const email = getUserEmail();
-    const response = await api.put(`cal/${eventId}/?email=${encodeURIComponent(email)}`, eventData, {
+    const response = await api.put(`cal/events/${eventId}/?email=${encodeURIComponent(email)}`, eventData, {
       headers: getAuthHeader()
     });
     return response.data;
@@ -61,7 +57,7 @@ export const updateEvent = async (eventId, eventData) => {
 export const deleteEvent = async (eventId) => {
   try {
     const email = getUserEmail();
-    await api.delete(`cal/${eventId}/?email=${encodeURIComponent(email)}`, {
+    await api.delete(`cal/events/${eventId}/?email=${encodeURIComponent(email)}`, {
       headers: getAuthHeader()
     });
     return true;
